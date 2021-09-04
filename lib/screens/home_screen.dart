@@ -96,10 +96,12 @@ class _HomeScreenState extends State<HomeScreen> {
       cryptoList[2],
       selectedDropDown,
     ); // LTC
-
-    double rate1 = res1['rate'];
-    double rate2 = res2['rate'];
-    double rate3 = res3['rate'];
+    double rate1 = 0;
+    double rate2 = 0;
+    double rate3 = 0;
+    if (res1 != null) rate1 = res1['rate'];
+    if (res2 != null) rate2 = res2['rate'];
+    if (res3 != null) rate3 = res3['rate'];
 
     setState(() {
       currencyValueBTC = rate1.floor().toString();
