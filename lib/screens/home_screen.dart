@@ -1,6 +1,7 @@
 import 'package:bitcoin_ticker/services/coin_data.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'dart:io' show Platform;
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -10,17 +11,52 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  String selectedDropDown = 'AED';
+  String selectedDropDown = 'USD';
 
-  void getDropdownItems() {
-    for (var i = 0; i < currenciesList.length; i++) {
-      print(currenciesList[i]);
+  DropdownButton<String> getAndroidDropdown() {
+    List<DropdownMenuItem<String>> dropdownItems = [];
+    for (String currency in currenciesList) {
+      DropdownMenuItem<String> newItem = DropdownMenuItem(
+        child: Text(
+          currency,
+        ),
+        value: currency,
+      );
+
+      dropdownItems.add(newItem);
     }
+
+    return DropdownButton<String>(
+      value: selectedDropDown,
+      isExpanded: true,
+      items: dropdownItems,
+      onChanged: (value) {
+        setState(() {
+          selectedDropDown = value.toString();
+        });
+      },
+    );
+  }
+
+  CupertinoPicker getIOSPicker() {
+    List<Text> pickerItems = [];
+
+    for (String currency in currenciesList) {
+      pickerItems.add(
+        Text(currency),
+      );
+    }
+
+    return CupertinoPicker(
+      backgroundColor: Colors.teal,
+      itemExtent: 32,
+      onSelectedItemChanged: (selected) {},
+      children: pickerItems,
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    getDropdownItems();
     return Scaffold(
       appBar: AppBar(
         title: const Text('Coin Ticker'),
@@ -57,34 +93,9 @@ class _HomeScreenState extends State<HomeScreen> {
             alignment: Alignment.center,
             padding: const EdgeInsets.only(bottom: 30),
             color: Colors.teal,
-            child: DropdownButton<String>(
-              value: selectedDropDown,
-              items: const [
-                DropdownMenuItem(
-                  child: Text(
-                    'USD',
-                  ),
-                  value: "USD",
-                ),
-                DropdownMenuItem(
-                  child: Text(
-                    'INR',
-                  ),
-                  value: "INR",
-                ),
-                DropdownMenuItem(
-                  child: Text(
-                    'AED',
-                  ),
-                  value: "AED",
-                ),
-              ],
-              onChanged: (value) {
-                print(value);
-                setState(() {
-                  selectedDropDown = value.toString();
-                });
-              },
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 80.0),
+              child: Platform.isIOS ? getIOSPicker() : getAndroidDropdown(),
             ),
           ),
         ],
