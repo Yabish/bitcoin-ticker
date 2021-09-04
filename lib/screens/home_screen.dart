@@ -1,3 +1,4 @@
+import 'package:bitcoin_ticker/components/card_container.dart';
 import 'package:bitcoin_ticker/services/coin_data.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -13,12 +14,13 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   String selectedDropDown = 'USD';
 
-  DropdownButton<String> getAndroidDropdown() {
+  DropdownButton<String> _getAndroidDropdown() {
     List<DropdownMenuItem<String>> dropdownItems = [];
     for (String currency in currenciesList) {
       DropdownMenuItem<String> newItem = DropdownMenuItem(
         child: Text(
           currency,
+          textAlign: TextAlign.center,
         ),
         value: currency,
       );
@@ -34,11 +36,12 @@ class _HomeScreenState extends State<HomeScreen> {
         setState(() {
           selectedDropDown = value.toString();
         });
+        getCurrencyData(value);
       },
     );
   }
 
-  CupertinoPicker getIOSPicker() {
+  CupertinoPicker _getIOSPicker() {
     List<Text> pickerItems = [];
 
     for (String currency in currenciesList) {
@@ -50,9 +53,17 @@ class _HomeScreenState extends State<HomeScreen> {
     return CupertinoPicker(
       backgroundColor: Colors.teal,
       itemExtent: 32,
-      onSelectedItemChanged: (selected) {},
+      onSelectedItemChanged: (selected) {
+        getCurrencyData(selected);
+      },
       children: pickerItems,
     );
+  }
+
+  void getCurrencyData(currency) {
+    print('value----- $currency');
+
+    for (String crypto in cryptoList) {}
   }
 
   @override
@@ -68,25 +79,25 @@ class _HomeScreenState extends State<HomeScreen> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          const Padding(
-            padding: EdgeInsets.fromLTRB(18.0, 18.0, 18.0, 0),
-            child: Card(
-              color: Colors.teal,
-              child: Padding(
-                padding: EdgeInsets.symmetric(
-                  vertical: 15.0,
-                  horizontal: 28.0,
-                ),
-                child: Text(
-                  '1 BTC = ? USD',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: const [
+              CardContainer(
+                crypto: 'BTC',
+                currency: 'USD',
+                currencyValue: 0,
               ),
-            ),
+              CardContainer(
+                crypto: 'ETH',
+                currency: 'USD',
+                currencyValue: 0,
+              ),
+              CardContainer(
+                crypto: 'LTC',
+                currency: 'USD',
+                currencyValue: 0,
+              ),
+            ],
           ),
           Container(
             height: 150,
@@ -94,8 +105,10 @@ class _HomeScreenState extends State<HomeScreen> {
             padding: const EdgeInsets.only(bottom: 30),
             color: Colors.teal,
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 80.0),
-              child: Platform.isIOS ? getIOSPicker() : getAndroidDropdown(),
+              padding: EdgeInsets.symmetric(
+                horizontal: Platform.isIOS ? 20.0 : 80,
+              ),
+              child: Platform.isIOS ? _getIOSPicker() : _getAndroidDropdown(),
             ),
           ),
         ],
