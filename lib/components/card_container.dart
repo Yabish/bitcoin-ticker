@@ -10,7 +10,7 @@ class CardContainer extends StatefulWidget {
 
   final String currency;
   final String crypto;
-  final int currencyValue;
+  final String currencyValue;
 
   @override
   State<CardContainer> createState() => _CardContainerState();

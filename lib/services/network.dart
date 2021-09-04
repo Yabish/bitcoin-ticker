@@ -7,6 +7,7 @@ class NetworkHandler {
   Future<dynamic> getCurrencyDataFromWeb(String crypto, String currency) async {
     http.Response response = await http.get(
       Uri.parse('https://rest.coinapi.io/v1/exchangerate/$crypto/$currency'),
+      headers: {'X-CoinAPI-Key': apiKey},
     );
 
     if (response.statusCode == 200) {

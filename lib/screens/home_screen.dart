@@ -1,5 +1,6 @@
 import 'package:bitcoin_ticker/components/card_container.dart';
 import 'package:bitcoin_ticker/services/coin_data.dart';
+import 'package:bitcoin_ticker/services/network.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'dart:io' show Platform;
@@ -13,6 +14,16 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   String selectedDropDown = 'USD';
+
+  String BTCCurrencyValue = '';
+  String ETHCurrencyValue = '';
+  String LTCCurrencyValue = '';
+
+  @override
+  void initState() {
+    super.initState();
+    getCurrencyData(selectedDropDown);
+  }
 
   DropdownButton<String> _getAndroidDropdown() {
     List<DropdownMenuItem<String>> dropdownItems = [];
@@ -36,7 +47,7 @@ class _HomeScreenState extends State<HomeScreen> {
         setState(() {
           selectedDropDown = value.toString();
         });
-        getCurrencyData(value);
+        getCurrencyData(selectedDropDown);
       },
     );
   }
@@ -53,17 +64,48 @@ class _HomeScreenState extends State<HomeScreen> {
     return CupertinoPicker(
       backgroundColor: Colors.teal,
       itemExtent: 32,
-      onSelectedItemChanged: (selected) {
-        getCurrencyData(selected);
+      onSelectedItemChanged: (index) {
+        setState(() {
+          selectedDropDown = currenciesList[index];
+        });
+        getCurrencyData(selectedDropDown);
       },
       children: pickerItems,
     );
   }
 
-  void getCurrencyData(currency) {
+  void getCurrencyData(currency) async {
     print('value----- $currency');
+    NetworkHandler networkHandler = NetworkHandler();
 
-    for (String crypto in cryptoList) {}
+    setState(() {
+      BTCCurrencyValue = '?';
+      ETHCurrencyValue = '?';
+      LTCCurrencyValue = '?';
+    });
+
+    dynamic res1 = await networkHandler.getCurrencyDataFromWeb(
+      cryptoList[0],
+      selectedDropDown,
+    ); // BTC
+    dynamic res2 = await networkHandler.getCurrencyDataFromWeb(
+      cryptoList[1],
+      selectedDropDown,
+    ); // ETH
+    dynamic res3 = await networkHandler.getCurrencyDataFromWeb(
+      cryptoList[2],
+      selectedDropDown,
+    ); // LTC
+
+    double rate1 = res1['rate'];
+    double rate2 = res2['rate'];
+    double rate3 = res3['rate'];
+
+    setState(() {
+      BTCCurrencyValue = rate1.floor().toString();
+      ETHCurrencyValue = rate2.floor().toString();
+      LTCCurrencyValue = rate3.floor().toString();
+    });
   }
 
   @override
@@ -81,21 +123,21 @@ class _HomeScreenState extends State<HomeScreen> {
         children: [
           Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: const [
+            children: [
               CardContainer(
                 crypto: 'BTC',
-                currency: 'USD',
-                currencyValue: 0,
+                currency: selectedDropDown,
+                currencyValue: BTCCurrencyValue,
               ),
               CardContainer(
                 crypto: 'ETH',
-                currency: 'USD',
-                currencyValue: 0,
+                currency: selectedDropDown,
+                currencyValue: ETHCurrencyValue,
               ),
               CardContainer(
                 crypto: 'LTC',
-                currency: 'USD',
-                currencyValue: 0,
+                currency: selectedDropDown,
+                currencyValue: LTCCurrencyValue,
               ),
             ],
           ),
