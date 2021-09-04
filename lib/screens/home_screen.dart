@@ -150,8 +150,7 @@ class _HomeScreenState extends State<HomeScreen> {
               padding: EdgeInsets.symmetric(
                 horizontal: Platform.isIOS ? 20.0 : 80,
               ),
-              child: _getIOSPicker(),
-              // child: Platform.isIOS ? _getIOSPicker() : _getAndroidDropdown(),
+              child: Platform.isIOS ? _getIOSPicker() : _getAndroidDropdown(),
             ),
           ),
         ],
