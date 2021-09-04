@@ -15,14 +15,14 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   String selectedDropDown = 'USD';
 
-  String BTCCurrencyValue = '';
-  String ETHCurrencyValue = '';
-  String LTCCurrencyValue = '';
+  String currencyValueBTC = '';
+  String currencyValueETH = '';
+  String currencyValueLTC = '';
 
   @override
   void initState() {
     super.initState();
-    getCurrencyData(selectedDropDown);
+    _getCurrencyData(selectedDropDown);
   }
 
   DropdownButton<String> _getAndroidDropdown() {
@@ -47,7 +47,7 @@ class _HomeScreenState extends State<HomeScreen> {
         setState(() {
           selectedDropDown = value.toString();
         });
-        getCurrencyData(selectedDropDown);
+        _getCurrencyData(selectedDropDown);
       },
     );
   }
@@ -64,24 +64,24 @@ class _HomeScreenState extends State<HomeScreen> {
     return CupertinoPicker(
       backgroundColor: Colors.teal,
       itemExtent: 32,
+      useMagnifier: true,
       onSelectedItemChanged: (index) {
         setState(() {
           selectedDropDown = currenciesList[index];
         });
-        getCurrencyData(selectedDropDown);
+        _getCurrencyData(selectedDropDown);
       },
       children: pickerItems,
     );
   }
 
-  void getCurrencyData(currency) async {
-    print('value----- $currency');
+  void _getCurrencyData(currency) async {
     NetworkHandler networkHandler = NetworkHandler();
 
     setState(() {
-      BTCCurrencyValue = '?';
-      ETHCurrencyValue = '?';
-      LTCCurrencyValue = '?';
+      currencyValueBTC = '?';
+      currencyValueETH = '?';
+      currencyValueLTC = '?';
     });
 
     dynamic res1 = await networkHandler.getCurrencyDataFromWeb(
@@ -102,9 +102,9 @@ class _HomeScreenState extends State<HomeScreen> {
     double rate3 = res3['rate'];
 
     setState(() {
-      BTCCurrencyValue = rate1.floor().toString();
-      ETHCurrencyValue = rate2.floor().toString();
-      LTCCurrencyValue = rate3.floor().toString();
+      currencyValueBTC = rate1.floor().toString();
+      currencyValueETH = rate2.floor().toString();
+      currencyValueLTC = rate3.floor().toString();
     });
   }
 
@@ -127,17 +127,17 @@ class _HomeScreenState extends State<HomeScreen> {
               CardContainer(
                 crypto: 'BTC',
                 currency: selectedDropDown,
-                currencyValue: BTCCurrencyValue,
+                currencyValue: currencyValueBTC,
               ),
               CardContainer(
                 crypto: 'ETH',
                 currency: selectedDropDown,
-                currencyValue: ETHCurrencyValue,
+                currencyValue: currencyValueETH,
               ),
               CardContainer(
                 crypto: 'LTC',
                 currency: selectedDropDown,
-                currencyValue: LTCCurrencyValue,
+                currencyValue: currencyValueLTC,
               ),
             ],
           ),
@@ -150,7 +150,8 @@ class _HomeScreenState extends State<HomeScreen> {
               padding: EdgeInsets.symmetric(
                 horizontal: Platform.isIOS ? 20.0 : 80,
               ),
-              child: Platform.isIOS ? _getIOSPicker() : _getAndroidDropdown(),
+              child: _getIOSPicker(),
+              // child: Platform.isIOS ? _getIOSPicker() : _getAndroidDropdown(),
             ),
           ),
         ],
